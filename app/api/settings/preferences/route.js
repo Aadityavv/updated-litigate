@@ -1,12 +1,26 @@
-import { connectToDatabase } from "../../../../lib/db";
+import { NextResponse } from "next/server";
+import { connectToDatabase } from "@/lib/db";
+
+export async function GET() {
+  const { db } = await connectToDatabase();
+  try {
+    const preferences = await db.collection("preferences").find().toArray();
+    return NextResponse.json(preferences);
+  } catch (error) {
+    return NextResponse.json({ error: "Error fetching preferences." }, { status: 500 });
+  }
+}
 
 export async function PUT(req) {
-    const { db } = await connectToDatabase();
-    const preferences = await req.json();
-    const result = await db.collection("settings").updateOne(
-        { type: "preferences" },
-        { $set: preferences },
-        { upsert: true }
-    );
-    return NextResponse.json({ message: "Preferences updated successfully", result });
+  const { db } = await connectToDatabase();
+  try {
+    const updates = await req.json();
+    const { userId, ...preferences } = updates;
+    const result = await db
+      .collection("preferences")
+      .updateOne({ userId }, { $set: preferences }, { upsert: true });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    return NextResponse.json({ error: "Error updating preferences." }, { status: 500 });
+  }
 }
