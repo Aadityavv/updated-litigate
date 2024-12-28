@@ -36,7 +36,7 @@ export default function Dashboard() {
     upcomingDeadlineDetails: [],
   });
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
-  const [showCount, setShowCount] = useState(10); // State to manage "Show More" count
+  const [showCount, setShowCount] = useState(5); // State to manage "Show More" count
 
   // Fetch data from APIs
   useEffect(() => {
@@ -146,7 +146,7 @@ export default function Dashboard() {
               stats.totalCasesDetails.length > showCount && (
                 <button
                   className="text-blue-600 mt-2 underline"
-                  onClick={() => setShowCount(showCount + 10)}
+                  onClick={() => setShowCount(showCount + 5)}
                 >
                   Show More
                 </button>
@@ -167,7 +167,7 @@ export default function Dashboard() {
               stats.pendingCasesDetails.length > showCount && (
                 <button
                   className="text-blue-600 mt-2 underline"
-                  onClick={() => setShowCount(showCount + 10)}
+                  onClick={() => setShowCount(showCount + 5)}
                 >
                   Show More
                 </button>
@@ -188,7 +188,7 @@ export default function Dashboard() {
               stats.resolvedCasesDetails.length > showCount && (
                 <button
                   className="text-blue-600 mt-2 underline"
-                  onClick={() => setShowCount(showCount + 10)}
+                  onClick={() => setShowCount(showCount + 5)}
                 >
                   Show More
                 </button>
@@ -208,7 +208,7 @@ export default function Dashboard() {
             {deadlines.length > showCount && (
               <button
                 className="text-blue-600 mt-2 underline"
-                onClick={() => setShowCount(showCount + 10)}
+                onClick={() => setShowCount(showCount + 5)}
               >
                 Show More
               </button>
