@@ -6,8 +6,10 @@ export async function GET() {
     // Establish database connection
     const { db } = await connectToDatabase();
 
-    // Get the current date
+    // Get the current date and last month's date
     const currentDate = new Date();
+    const lastMonthDate = new Date();
+    lastMonthDate.setMonth(lastMonthDate.getMonth() - 1);
 
     // Fetch overall statistics with detailed data
     const totalCases = await db.collection("cases").countDocuments();
@@ -15,6 +17,7 @@ export async function GET() {
       caseId: 1,
       title: 1,
       status: 1,
+      createdAt: 1, // Include createdAt for filtering by last month
     }).toArray();
 
     const pendingCases = await db.collection("cases").countDocuments({
@@ -26,6 +29,7 @@ export async function GET() {
       caseId: 1,
       title: 1,
       status: 1,
+      updatedAt: 1, // Include updatedAt for filtering by last month
     }).toArray();
 
     const resolvedCases = await db.collection("cases").countDocuments({
@@ -37,10 +41,31 @@ export async function GET() {
       caseId: 1,
       title: 1,
       status: 1,
+      updatedAt: 1, // Include updatedAt for filtering by last month
     }).toArray();
 
-    // Query for upcoming deadlines
-    const upcomingDeadlinesQuery = { deadline: { $gte: currentDate } };
+    // Fetch stats for last month's changes
+    const totalCasesLastMonth = await db.collection("cases").countDocuments({
+      createdAt: { $gte: lastMonthDate, $lt: currentDate },
+    });
+
+    const pendingCasesLastMonth = await db.collection("cases").countDocuments({
+      status: { $in: ["pending", "Pending", "Active", "active"] },
+      updatedAt: { $gte: lastMonthDate, $lt: currentDate },
+    });
+
+    const resolvedCasesLastMonth = await db.collection("cases").countDocuments({
+      status: { $in: ["resolved", "Resolved", "closed", "Closed"] },
+      updatedAt: { $gte: lastMonthDate, $lt: currentDate },
+    });
+
+    // Query for upcoming deadlines within the next 7 days
+    const upcomingDeadlinesQuery = {
+      deadline: {
+        $gte: currentDate,
+        $lt: new Date(currentDate.getTime() + 7 * 24 * 60 * 60 * 1000),
+      },
+    };
     const upcomingDeadlinesCount = await db
       .collection("cases")
       .countDocuments(upcomingDeadlinesQuery);
@@ -60,8 +85,11 @@ export async function GET() {
     // Prepare response
     const stats = {
       totalCases,
+      totalCasesChange: totalCases - totalCasesLastMonth,
       pendingCases,
+      pendingCasesChange: pendingCases - pendingCasesLastMonth,
       resolvedCases,
+      resolvedCasesChange: resolvedCases - resolvedCasesLastMonth,
       upcomingDeadlines: upcomingDeadlinesCount,
       totalCasesDetails,
       pendingCasesDetails,
