@@ -23,6 +23,7 @@ export default function Dashboard() {
   const [lawyerName, setLawyerName] = useState(""); // Dynamic lawyer name
   const [events, setEvents] = useState<string[]>([]);
   const [notifications, setNotifications] = useState<any[]>([]);
+  const [deadlines, setDeadlines] = useState<any[]>([]); // State for upcoming deadlines
   const [stats, setStats] = useState({
     totalCases: 0,
     pendingCases: 0,
@@ -48,12 +49,20 @@ export default function Dashboard() {
       }
     };
 
-    // Fetch stats
+    // Fetch stats and deadlines
     const fetchStats = async () => {
       try {
         const response = await fetch("/api/dashboard/stats");
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
         setStats(data);
+
+        // Set deadlines from the response
+        if (data.upcomingDeadlineDetails) {
+          setDeadlines(data.upcomingDeadlineDetails);
+        }
       } catch (error) {
         console.error("Error fetching stats:", error);
       }
@@ -117,7 +126,22 @@ export default function Dashboard() {
       case "resolved-cases":
         return <p>Sample data for Resolved Cases.</p>;
       case "upcoming-deadlines":
-        return <p>Sample data for Upcoming Deadlines.</p>;
+        return (
+          <ul>
+            {deadlines.length > 0 ? (
+              deadlines.map((deadline, index) => (
+                <li key={index}>
+                  <p className="font-semibold">{deadline.title}</p>
+                  <p className="text-sm text-gray-600">
+                    {format(new Date(deadline.deadline), "PPP p")}
+                  </p>
+                </li>
+              ))
+            ) : (
+              <p>No upcoming deadlines.</p>
+            )}
+          </ul>
+        );
       default:
         return <p>No data available.</p>;
     }
@@ -266,16 +290,80 @@ export default function Dashboard() {
       </div>
 
       {/* Sample Data Display */}
-      {selectedCard && (
-        <div className="mt-6">
-          <Card className="shadow-md">
-            <CardHeader>
-              <CardTitle>{getCardTitle(selectedCard)}</CardTitle>
-            </CardHeader>
-            <CardContent>{getSampleData(selectedCard)}</CardContent>
-          </Card>
-        </div>
-      )}
+{selectedCard && (
+  <div className="mt-6">
+    <Card className="shadow-md">
+      <CardHeader>
+        <CardTitle>{getCardTitle(selectedCard)}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {(() => {
+          switch (selectedCard) {
+            case "total-cases":
+              return (
+                <ul>
+                  {stats.totalCasesDetails && stats.totalCasesDetails.length > 0 ? (
+                    stats.totalCasesDetails.map((caseItem, index) => (
+                      <li key={index}>
+                        <strong>Case #{caseItem.caseId}</strong>: {caseItem.title}
+                      </li>
+                    ))
+                  ) : (
+                    <p>No total cases found.</p>
+                  )}
+                </ul>
+              );
+            case "pending-cases":
+              return (
+                <ul>
+                  {stats.pendingCasesDetails && stats.pendingCasesDetails.length > 0 ? (
+                    stats.pendingCasesDetails.map((caseItem, index) => (
+                      <li key={index}>
+                        <strong>Case #{caseItem.caseId}</strong>: {caseItem.title}
+                      </li>
+                    ))
+                  ) : (
+                    <p>No pending cases found.</p>
+                  )}
+                </ul>
+              );
+            case "resolved-cases":
+              return (
+                <ul>
+                  {stats.resolvedCasesDetails && stats.resolvedCasesDetails.length > 0 ? (
+                    stats.resolvedCasesDetails.map((caseItem, index) => (
+                      <li key={index}>
+                        <strong>Case #{caseItem.caseId}</strong>: {caseItem.title}
+                      </li>
+                    ))
+                  ) : (
+                    <p>No resolved cases found.</p>
+                  )}
+                </ul>
+              );
+            case "upcoming-deadlines":
+              return (
+                <ul>
+                  {deadlines.length > 0 ? (
+                    deadlines.map((deadline, index) => (
+                      <li key={index}>
+                        <strong>{deadline.title}</strong>: Due by{" "}
+                        {format(new Date(deadline.deadline), "PPP")}
+                      </li>
+                    ))
+                  ) : (
+                    <p>No upcoming deadlines found.</p>
+                  )}
+                </ul>
+              );
+            default:
+              return <p>No data available.</p>;
+          }
+        })()}
+      </CardContent>
+    </Card>
+  </div>
+)}
 
       {/* Notifications Section */}
       <Card>

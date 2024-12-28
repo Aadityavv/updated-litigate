@@ -6,23 +6,67 @@ export async function GET() {
     // Establish database connection
     const { db } = await connectToDatabase();
 
-    // Fetch statistics from the 'cases' and 'deadlines' collections
-    const totalCases = await db.collection("cases").countDocuments();
-    const pendingCases = await db.collection("cases").countDocuments({
-      status: "pending",
-    });
-    const resolvedCases = await db.collection("cases").countDocuments({
-      status: "resolved",
-    });
-    const upcomingDeadlines = await db.collection("deadlines").countDocuments({
-      dueDate: { $gte: new Date() },
-    });
+    // Get the current date
+    const currentDate = new Date();
 
+    // Fetch overall statistics with detailed data
+    const totalCases = await db.collection("cases").countDocuments();
+    const totalCasesDetails = await db.collection("cases").find({}).project({
+      caseId: 1,
+      title: 1,
+      status: 1,
+    }).toArray();
+
+    const pendingCases = await db.collection("cases").countDocuments({
+      status: { $in: ["pending", "Pending", "Active", "active"] },
+    });
+    const pendingCasesDetails = await db.collection("cases").find({
+      status: { $in: ["pending", "Pending", "Active", "active"] },
+    }).project({
+      caseId: 1,
+      title: 1,
+      status: 1,
+    }).toArray();
+
+    const resolvedCases = await db.collection("cases").countDocuments({
+      status: { $in: ["resolved", "Resolved", "closed", "Closed"] },
+    });
+    const resolvedCasesDetails = await db.collection("cases").find({
+      status: { $in: ["resolved", "Resolved", "closed", "Closed"] },
+    }).project({
+      caseId: 1,
+      title: 1,
+      status: 1,
+    }).toArray();
+
+    // Query for upcoming deadlines
+    const upcomingDeadlinesQuery = { deadline: { $gte: currentDate } };
+    const upcomingDeadlinesCount = await db
+      .collection("cases")
+      .countDocuments(upcomingDeadlinesQuery);
+
+    const upcomingDeadlineDetails = await db
+      .collection("cases")
+      .find(upcomingDeadlinesQuery)
+      .project({
+        caseId: 1,
+        title: 1,
+        deadline: 1,
+        clientName: 1,
+        status: 1,
+      })
+      .toArray();
+
+    // Prepare response
     const stats = {
       totalCases,
       pendingCases,
       resolvedCases,
-      upcomingDeadlines,
+      upcomingDeadlines: upcomingDeadlinesCount,
+      totalCasesDetails,
+      pendingCasesDetails,
+      resolvedCasesDetails,
+      upcomingDeadlineDetails,
     };
 
     return NextResponse.json(stats);
