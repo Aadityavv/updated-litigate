@@ -27,11 +27,13 @@ export default function Dashboard() {
     totalCasesChange: 0,
     pendingCases: 0,
     pendingCasesChange: 0,
+    overduePendingCasesCount: 0,
     resolvedCases: 0,
     resolvedCasesChange: 0,
     upcomingDeadlines: 0,
     totalCasesDetails: [],
     pendingCasesDetails: [],
+    overduePendingCasesDetails: [],
     resolvedCasesDetails: [],
     upcomingDeadlineDetails: [],
   });
@@ -163,6 +165,9 @@ export default function Dashboard() {
                 <p className="text-gray-500">No pending cases found.</p>
               )}
             </ul>
+            <p className="text-sm text-red-500 mt-2">
+              Overdue Pending Cases: {stats.overduePendingCasesCount}
+            </p>
             {stats.pendingCasesDetails &&
               stats.pendingCasesDetails.length > showCount && (
                 <button
@@ -318,9 +323,8 @@ export default function Dashboard() {
             </div>
             <p className="text-sm text-gray-500 mt-2">
               <span className="text-red-600 font-semibold">
-                {stats.pendingCasesChange}
-              </span>{" "}
-              from last month
+                Overdue: {stats.overduePendingCasesCount}
+              </span>
             </p>
           </CardContent>
         </Card>
@@ -347,9 +351,6 @@ export default function Dashboard() {
                 +{stats.resolvedCasesChange}
               </span>{" "}
               from last month
-            </p>
-            <p className="text-sm text-gray-400 italic mt-1">
-              Verify cases won details.
             </p>
           </CardContent>
         </Card>

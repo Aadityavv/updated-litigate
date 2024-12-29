@@ -9,7 +9,9 @@ export async function GET() {
     // Get the current date and last month's date
     const currentDate = new Date();
     const lastMonthDate = new Date();
-    lastMonthDate.setMonth(lastMonthDate.getMonth() - 1);
+    lastMonthDate.setMonth(currentDate.getMonth() - 1);
+
+    console.log("Last month date:", lastMonthDate);
 
     // Fetch overall statistics with detailed data
     const totalCases = await db.collection("cases").countDocuments();
@@ -20,6 +22,7 @@ export async function GET() {
       createdAt: 1, // Include createdAt for filtering by last month
     }).toArray();
 
+    // Fetch all pending cases
     const pendingCases = await db.collection("cases").countDocuments({
       status: { $in: ["pending", "Pending", "Active", "active"] },
     });
@@ -29,9 +32,28 @@ export async function GET() {
       caseId: 1,
       title: 1,
       status: 1,
-      updatedAt: 1, // Include updatedAt for filtering by last month
+      deadline: 1, // Include deadline for filtering overdue cases
     }).toArray();
 
+    // Fetch overdue pending cases (deadline less than the current date)
+    const overduePendingCasesCount = await db.collection("cases").countDocuments({
+      status: { $in: ["pending", "Pending", "Active", "active"] },
+      deadline: { $lt: currentDate }, // Deadline is past due
+    });
+
+    console.log("Overdue pending cases count:", overduePendingCasesCount);
+
+    const overduePendingCasesDetails = await db.collection("cases").find({
+      status: { $in: ["pending", "Pending", "Active", "active"] },
+      deadline: { $lt: currentDate }, // Deadline is past due
+    }).project({
+      caseId: 1,
+      title: 1,
+      status: 1,
+      deadline: 1,
+    }).toArray();
+
+    // Fetch resolved cases
     const resolvedCases = await db.collection("cases").countDocuments({
       status: { $in: ["resolved", "Resolved", "closed", "Closed"] },
     });
@@ -54,11 +76,13 @@ export async function GET() {
       updatedAt: { $gte: lastMonthDate, $lt: currentDate },
     });
 
+    console.log("Pending cases last month:", pendingCasesLastMonth);
+
     const resolvedCasesLastMonth = await db.collection("cases").countDocuments({
       status: { $in: ["resolved", "Resolved", "closed", "Closed"] },
       updatedAt: { $gte: lastMonthDate, $lt: currentDate },
     });
-
+    console.log("Resolved Cases Last Month: ", resolvedCasesLastMonth)
     // Query for upcoming deadlines within the next 7 days
     const upcomingDeadlinesQuery = {
       deadline: {
@@ -85,14 +109,16 @@ export async function GET() {
     // Prepare response
     const stats = {
       totalCases,
-      totalCasesChange: totalCases - totalCasesLastMonth,
+      totalCasesChange: totalCasesLastMonth,
       pendingCases,
       pendingCasesChange: pendingCases - pendingCasesLastMonth,
+      overduePendingCasesCount,
       resolvedCases,
       resolvedCasesChange: resolvedCases - resolvedCasesLastMonth,
       upcomingDeadlines: upcomingDeadlinesCount,
       totalCasesDetails,
       pendingCasesDetails,
+      overduePendingCasesDetails,
       resolvedCasesDetails,
       upcomingDeadlineDetails,
     };
