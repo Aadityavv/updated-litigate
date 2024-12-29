@@ -9,12 +9,13 @@ export async function GET() {
     const { db } = await connectToDatabase();
     console.log("Database connection established.");
 
-    // Get the current date and set the start and end of the day
-    const today = new Date();
-    const startOfDay = new Date(today.setHours(0, 0, 0, 0));
-    const endOfDay = new Date(today.setHours(23, 59, 59, 999));
-    console.log("Start of Day:", startOfDay);
-    console.log("End of Day:", endOfDay);
+    // Get the current date in UTC and set the start and end of the day in UTC
+    const now = new Date();
+    const startOfDayUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0));
+    const endOfDayUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59, 999));
+
+    console.log("Start of Day (UTC):", startOfDayUTC);
+    console.log("End of Day (UTC):", endOfDayUTC);
 
     // Fetch notifications from today's date from the 'notifications' collection
     console.log("Fetching notifications from the database...");
@@ -22,8 +23,8 @@ export async function GET() {
       .collection("notifications")
       .find({
         date: {
-          $gte: startOfDay, // Notifications on or after the start of the day
-          $lte: endOfDay, // Notifications on or before the end of the day
+          $gte: startOfDayUTC, // Notifications on or after the start of the day in UTC
+          $lte: endOfDayUTC, // Notifications on or before the end of the day in UTC
         },
       })
       .toArray();

@@ -2,6 +2,19 @@ import json
 import random
 from datetime import datetime, timedelta
 
+# Generate a random date
+def random_date(start_year=2020, end_year=2025):
+    random_year = random.randint(start_year, end_year)
+    random_month = random.randint(1, 12)
+    random_day = random.randint(1, 28)  # To avoid issues with February and leap years
+    random_hour = random.randint(0, 23)
+    random_minute = random.randint(0, 59)
+    random_second = random.randint(0, 59)
+    random_microsecond = random.randint(0, 999999)
+    return datetime(
+        random_year, random_month, random_day, random_hour, random_minute, random_second, random_microsecond
+    )
+
 # Generate random notifications
 def generate_notifications(num_notifications):
     notifications = []
@@ -10,7 +23,7 @@ def generate_notifications(num_notifications):
             "notificationId": f"N{i:05}",
             "title": f"Notification Title {i}",
             "description": f"This is the description for notification {i}.",
-            "date": (datetime.now() - timedelta(days=random.randint(0, 30))).strftime("%Y-%m-%dT%H:%M:%S.%fZ"),  # Random date in the last 30 days
+            "date": random_date().strftime("%Y-%m-%dT%H:%M:%S.%fZ"),  # Random date with random year and month
         }
         notifications.append(notification)
     return notifications
@@ -28,7 +41,7 @@ def generate_events(num_events):
 
     events = []
     for i in range(1, num_events + 1):
-        event_date = datetime.now() + timedelta(days=random.randint(-15, 15))  # Random date within the last or next 15 days
+        event_date = random_date()  # Random date with random year and month
         event = {
             "eventId": f"E{i:05}",
             "eventName": f"Event {i}",
