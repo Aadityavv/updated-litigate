@@ -11,9 +11,11 @@ export async function GET() {
 
     // Transform events to a simplified structure
     const eventDetails = events.map(event => ({
-      id: event._id,
+      id: event._id.toString(), // Convert ObjectId to string
       title: event.title,
-      date: event.date,
+      description: event.description || "No description provided", // Include description if available
+      date: new Date(event.date).toISOString(), // Ensure date is in ISO format
+      location: event.location || "No location specified", // Add location if available
     }));
 
     return NextResponse.json(eventDetails);

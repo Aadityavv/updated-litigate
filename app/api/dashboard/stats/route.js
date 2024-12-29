@@ -56,15 +56,25 @@ export async function GET() {
     // Fetch resolved cases
     const resolvedCases = await db.collection("cases").countDocuments({
       status: { $in: ["resolved", "Resolved", "closed", "Closed"] },
+      deadline: { $lt: currentDate }, // Deadline is less than today's date
     });
     const resolvedCasesDetails = await db.collection("cases").find({
       status: { $in: ["resolved", "Resolved", "closed", "Closed"] },
+      deadline: { $lt: currentDate }, // Deadline is less than today's date
     }).project({
       caseId: 1,
       title: 1,
       status: 1,
-      updatedAt: 1, // Include updatedAt for filtering by last month
+      deadline: 1,
     }).toArray();
+
+    // Fetch resolved cases for last month
+    const resolvedCasesLastMonthCount = await db.collection("cases").countDocuments({
+      status: { $in: ["resolved", "Resolved", "closed", "Closed"] },
+      deadline: { $gte: lastMonthDate, $lt: currentDate }, // Deadline within the last month
+    });
+
+    console.log("Resolved Cases Last Month Count: ", resolvedCasesLastMonthCount);
 
     // Fetch stats for last month's changes
     const totalCasesLastMonth = await db.collection("cases").countDocuments({
@@ -78,11 +88,8 @@ export async function GET() {
 
     console.log("Pending cases last month:", pendingCasesLastMonth);
 
-    const resolvedCasesLastMonth = await db.collection("cases").countDocuments({
-      status: { $in: ["resolved", "Resolved", "closed", "Closed"] },
-      updatedAt: { $gte: lastMonthDate, $lt: currentDate },
-    });
-    console.log("Resolved Cases Last Month: ", resolvedCasesLastMonth)
+    console.log("Resolved Cases Last Month: ", resolvedCasesLastMonthCount);
+
     // Query for upcoming deadlines within the next 7 days
     const upcomingDeadlinesQuery = {
       deadline: {
@@ -114,7 +121,7 @@ export async function GET() {
       pendingCasesChange: pendingCases - pendingCasesLastMonth,
       overduePendingCasesCount,
       resolvedCases,
-      resolvedCasesChange: resolvedCases - resolvedCasesLastMonth,
+      resolvedCasesChange: resolvedCases - resolvedCasesLastMonthCount, // Calculate +n from last month
       upcomingDeadlines: upcomingDeadlinesCount,
       totalCasesDetails,
       pendingCasesDetails,
