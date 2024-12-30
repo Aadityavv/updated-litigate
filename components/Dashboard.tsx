@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { format } from "date-fns";
+import { format, isSameDay } from "date-fns";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
 
 // UI Components
@@ -20,6 +20,7 @@ export default function Dashboard() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [lawyerName, setLawyerName] = useState("Guest"); // Dynamic lawyer name
   const [events, setEvents] = useState<any[]>([]); // Updated type for proper rendering
+  const [filteredEvents, setFilteredEvents] = useState<any[]>([]); // Events filtered by selected date
   const [notifications, setNotifications] = useState<any[]>([]);
   const [deadlines, setDeadlines] = useState<any[]>([]); // State for upcoming deadlines
   const [stats, setStats] = useState({
@@ -42,7 +43,6 @@ export default function Dashboard() {
 
   // Fetch data from APIs
   useEffect(() => {
-    // Fetch user details
     const fetchUser = async () => {
       try {
         const response = await fetch("/api/user");
@@ -57,7 +57,6 @@ export default function Dashboard() {
       }
     };
 
-    // Fetch stats and deadlines
     const fetchStats = async () => {
       try {
         const response = await fetch("/api/dashboard/stats");
@@ -76,7 +75,6 @@ export default function Dashboard() {
       }
     };
 
-    // Fetch events
     const fetchEvents = async () => {
       try {
         const response = await fetch("/api/dashboard/events");
@@ -88,7 +86,6 @@ export default function Dashboard() {
       }
     };
 
-    // Fetch notifications
     const fetchNotifications = async () => {
       try {
         const response = await fetch("/api/dashboard/notifications");
@@ -109,7 +106,16 @@ export default function Dashboard() {
     fetchNotifications();
   }, []);
 
-  // Get card title based on the selected card
+  // Update filtered events whenever selectedDate or events change
+  useEffect(() => {
+    if (selectedDate) {
+      const filtered = events.filter((event) =>
+        isSameDay(new Date(event.date), selectedDate)
+      );
+      setFilteredEvents(filtered);
+    }
+  }, [selectedDate, events]);
+
   const getCardTitle = (card: string) => {
     switch (card) {
       case "total-cases":
@@ -125,7 +131,6 @@ export default function Dashboard() {
     }
   };
 
-  // Render sample data based on the selected card
   const getSampleData = (card: string) => {
     const casesToShow = (cases: any[]) =>
       cases.slice(0, showCount).map((caseItem, index) => (
@@ -216,7 +221,7 @@ export default function Dashboard() {
                 className="text-blue-600 mt-2 underline"
                 onClick={() => setShowCount(showCount + 5)}
               >
-                Show More
+                  Show More
               </button>
             )}
           </>
@@ -258,14 +263,16 @@ export default function Dashboard() {
                 Events on {selectedDate ? format(selectedDate, "PPP") : "Select a date"}
               </h3>
               <ul className="space-y-3">
-                {events.length > 0 ? (
-                  events.map((event) => (
-                    <li key={event.id} className="text-gray-600 flex flex-col space-y-1">
-                      <span className="font-bold">{event.title}</span>
-                      <span>{event.description}</span>
-                      <span className="text-sm text-gray-500">Location: {event.location}</span>
-                      <span className="text-sm text-gray-500">
-                        Time: {new Date(event.date).toLocaleString()}
+                {filteredEvents.length > 0 ? (
+                  filteredEvents.map((event) => (
+                    <li key={event.id} className="flex items-center space-x-2">
+                      <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
+                      <span className="text-gray-600 font-medium">
+                        {event.title} at{" "}
+                        {new Date(event.date).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
                       </span>
                     </li>
                   ))
