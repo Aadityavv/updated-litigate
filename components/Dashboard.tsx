@@ -19,7 +19,7 @@ export default function Dashboard() {
   // State Variables
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [lawyerName, setLawyerName] = useState("Guest"); // Dynamic lawyer name
-  const [events, setEvents] = useState<string[]>([]);
+  const [events, setEvents] = useState<any[]>([]); // Updated type for proper rendering
   const [notifications, setNotifications] = useState<any[]>([]);
   const [deadlines, setDeadlines] = useState<any[]>([]); // State for upcoming deadlines
   const [stats, setStats] = useState({
@@ -81,6 +81,7 @@ export default function Dashboard() {
       try {
         const response = await fetch("/api/dashboard/events");
         const data = await response.json();
+        console.log("Events data fetched:", data); // Debugging
         setEvents(data);
       } catch (error) {
         console.error("Error fetching events:", error);
@@ -258,13 +259,14 @@ export default function Dashboard() {
               </h3>
               <ul className="space-y-3">
                 {events.length > 0 ? (
-                  events.map((event, index) => (
-                    <li
-                      key={index}
-                      className="text-gray-600 flex items-center space-x-2"
-                    >
-                      <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
-                      <span>{event}</span>
+                  events.map((event) => (
+                    <li key={event.id} className="text-gray-600 flex flex-col space-y-1">
+                      <span className="font-bold">{event.title}</span>
+                      <span>{event.description}</span>
+                      <span className="text-sm text-gray-500">Location: {event.location}</span>
+                      <span className="text-sm text-gray-500">
+                        Time: {new Date(event.date).toLocaleString()}
+                      </span>
                     </li>
                   ))
                 ) : (
@@ -374,7 +376,7 @@ export default function Dashboard() {
             <div className="text-4xl font-extrabold text-red-600">
               {stats.upcomingDeadlines}
             </div>
-            <p className="text-sm text-gray-500 mt-2">Within next 7 days</p>
+            <p className="text-sm text-gray-500">Within next 7 days</p>
           </CardContent>
         </Card>
       </div>
