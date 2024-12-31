@@ -19,9 +19,8 @@ export default function Dashboard() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [lawyerName, setLawyerName] = useState("Guest"); // Dynamic lawyer name
   const [events, setEvents] = useState<any[]>([]); // Events fetched from API
-  const [filteredEvents, setFilteredEvents] = useState<any[]>([]); // Events filtered by selected date
-  const [notifications, setNotifications] = useState<any[]>([]); // Placeholder for notifications
-  const [deadlines, setDeadlines] = useState<any[]>([]); // State for upcoming deadlines
+  const [notifications, setNotifications] = useState<any[]>([]); // Notifications
+  const [deadlines, setDeadlines] = useState<any[]>([]); // Upcoming deadlines
   const [stats, setStats] = useState({
     totalCases: 0,
     totalCasesChange: 0,
@@ -38,9 +37,9 @@ export default function Dashboard() {
     upcomingDeadlineDetails: [],
   });
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
-  const [showCount, setShowCount] = useState(5); // State to manage "Show More" count
+  const [showCount, setShowCount] = useState(5); // Manage "Show More" count
 
-  // Fetch data from APIs
+  // Fetch user details
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -74,33 +73,6 @@ export default function Dashboard() {
       }
     };
 
-    // const fetchEvents = async () => {
-    //   try {
-    //     const response = await fetch("/api/dashboard/events");
-    //     const data = await response.json();
-    //     console.log("Fetched events:", data); // Debugging
-    //     setEvents(data);
-    //   } catch (error) {
-    //     console.error("Error fetching events:", error);
-    //   }
-    // };
-
-    const fetchEvents = async (date: Date) => {
-      try {
-        const formattedDate = date.toISOString(); // Convert the date to ISO format
-        const response = await fetch(`/api/dashboard/events?date=${formattedDate}`); // Pass the date as a query parameter
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        console.log("Events data fetched:", data); // Debugging
-        setEvents(data); // Update the events state
-      } catch (error) {
-        console.error("Error fetching events:", error);
-      }
-    };
-    
-
     const fetchNotifications = async () => {
       try {
         const response = await fetch("/api/dashboard/notifications");
@@ -113,21 +85,30 @@ export default function Dashboard() {
 
     fetchUser();
     fetchStats();
-    fetchEvents();
     fetchNotifications();
   }, []);
 
-  // Filter events based on the selected date
+  // Fetch events dynamically based on the selected date
+  const fetchEvents = async (date: Date) => {
+    try {
+      const formattedDate = date.toISOString(); // Convert the date to ISO format
+      const response = await fetch(`/api/dashboard/events?date=${formattedDate}`); // Pass the date as a query parameter
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log("Events data fetched:", data); // Debugging
+      setEvents(data); // Update the events state
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
+  };
+
   useEffect(() => {
     if (selectedDate) {
       fetchEvents(selectedDate); // Fetch events for the selected date
     }
   }, [selectedDate]);
-  
-  
-  console.log("Selected date:", selectedDate);
-  console.log("Event date:", events.map((event) => event.date));
-  
 
   const getCardTitle = (card: string) => {
     switch (card) {
@@ -276,8 +257,8 @@ export default function Dashboard() {
                 Events on {selectedDate ? format(selectedDate, "PPP") : "Select a date"}
               </h3>
               <ul className="space-y-3">
-                {filteredEvents.length > 0 ? (
-                  filteredEvents.map((event) => (
+                {events.length > 0 ? (
+                  events.map((event) => (
                     <li
                       key={event.id}
                       className="flex flex-col space-y-1 text-gray-700"
