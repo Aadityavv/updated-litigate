@@ -11,8 +11,15 @@ import { Input } from "@/components/ui/input";
 
 export default function AuthPage({ onLogin }: { onLogin: () => void }) {
   const [isSignUp, setIsSignUp] = useState(false); // Toggle between Login and Sign Up
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    country: "",
+    phone: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
 
   const taglines = [
     "Empowering legal professionals with cutting-edge technology.",
@@ -29,11 +36,20 @@ export default function AuthPage({ onLogin }: { onLogin: () => void }) {
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (isSignUp) {
-      alert("Sign-Up with Email and Password: " + email);
+      if (formData.password !== formData.confirmPassword) {
+        alert("Passwords do not match!");
+        return;
+      }
+      alert(`Sign-Up Details: ${JSON.stringify(formData)}`);
     } else {
-      alert("Login with Email and Password: " + email);
+      alert(`Login with Email: ${formData.email}`);
     }
     onLogin();
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
   return (
@@ -60,7 +76,7 @@ export default function AuthPage({ onLogin }: { onLogin: () => void }) {
 
       {/* Right Side */}
       <motion.div
-        className="flex-1 bg-white h-full flex flex-col justify-center p-8 md:p-16 rounded-lg shadow-xl space-y-6 md:max-w-lg md:mr-[10%]"
+        className={`flex-1 bg-white flex flex-col justify-center p-6 md:p-10 rounded-lg shadow-xl space-y-4 md:max-w-lg md:mr-[10%] h-auto`}
         initial={{ x: 200, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 1, ease: "easeOut" }}
@@ -69,39 +85,108 @@ export default function AuthPage({ onLogin }: { onLogin: () => void }) {
           {isSignUp ? "Create an Account" : "Login to Your Account"}
         </h2>
 
-        <form onSubmit={handleFormSubmit} className="space-y-6">
+        <form onSubmit={handleFormSubmit} className="space-y-4">
+          {isSignUp && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
+                  First Name
+                </label>
+                <Input
+                  type="text"
+                  id="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  required
+                  className="mt-1 text-sm"
+                />
+              </div>
+              <div>
+                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
+                  Last Name
+                </label>
+                <Input
+                  type="text"
+                  id="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  required
+                  className="mt-1 text-sm"
+                />
+              </div>
+              <div>
+                <label htmlFor="country" className="block text-sm font-medium text-gray-700">
+                  Country
+                </label>
+                <Input
+                  type="text"
+                  id="country"
+                  value={formData.country}
+                  onChange={handleChange}
+                  required
+                  className="mt-1 text-sm"
+                />
+              </div>
+              <div>
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                  Phone Number
+                </label>
+                <Input
+                  type="tel"
+                  id="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  required
+                  className="mt-1 text-sm"
+                />
+              </div>
+            </div>
+          )}
+
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
               Email Address
             </label>
             <Input
               type="email"
               id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={formData.email}
+              onChange={handleChange}
               required
-              className="mt-1"
+              className="mt-1 text-sm"
             />
           </div>
           <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
               Password
             </label>
             <Input
               type="password"
               id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={formData.password}
+              onChange={handleChange}
               required
-              className="mt-1"
+              className="mt-1 text-sm"
             />
           </div>
+          {isSignUp && (
+            <div>
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Confirm Password
+              </label>
+              <Input
+                type="password"
+                id="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                required
+                className="mt-1 text-sm"
+              />
+            </div>
+          )}
           <Button
             type="submit"
             className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2"
@@ -123,7 +208,7 @@ export default function AuthPage({ onLogin }: { onLogin: () => void }) {
         </Button>
 
         <p className="text-sm text-center text-gray-600">
-          {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
+          {isSignUp ? "Already have an account?" : "Don't have an account?"} {" "}
           <button
             onClick={() => setIsSignUp(!isSignUp)}
             className="text-indigo-600 font-medium hover:underline"

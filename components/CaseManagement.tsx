@@ -17,6 +17,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { PlusCircle, Star, StarOff, Search } from "lucide-react";
 import { Toaster, toast } from "react-hot-toast";
 import { Input } from "@/components/ui/input";
+import AddNewCaseModal from "@/components/AddNewCase";
 
 interface Case {
   id: number;
@@ -36,6 +37,7 @@ export default function CaseManagement({ onCaseSelect }: CaseManagementProps) {
   // State for cases
   const [cases, setCases] = useState<Case[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isAddCaseModalOpen, setIsAddCaseModalOpen] = useState(false); // Modal state
 
   // Fetch cases from API
   useEffect(() => {
@@ -77,6 +79,13 @@ export default function CaseManagement({ onCaseSelect }: CaseManagementProps) {
       case_.title.toLowerCase().includes(searchQuery.toLowerCase())
     )
     .sort((a, b) => (a.isPinned === b.isPinned ? 0 : a.isPinned ? -1 : 1));
+
+  // Handler to add a new case
+  const handleAddNewCase = (newCase: Case) => {
+    setCases((prevCases) => [newCase, ...prevCases]);
+    toast.success("New case added successfully!");
+    setIsAddCaseModalOpen(false);
+  };
 
   return (
     <div className="p-4 sm:p-6 bg-gray-50">
@@ -152,12 +161,23 @@ export default function CaseManagement({ onCaseSelect }: CaseManagementProps) {
           </ScrollArea>
         </CardContent>
         <CardFooter className="flex justify-between">
-          <Button className="flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md">
+          <Button
+            onClick={() => setIsAddCaseModalOpen(true)}
+            className="flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md"
+          >
             <PlusCircle className="mr-2 h-5 w-5" />
             Add New Case
           </Button>
         </CardFooter>
       </Card>
+
+      {/* Add New Case Modal */}
+      {isAddCaseModalOpen && (
+        <AddNewCaseModal
+          onClose={() => setIsAddCaseModalOpen(false)}
+          onAddCase={handleAddNewCase}
+        />
+      )}
     </div>
   );
 }
