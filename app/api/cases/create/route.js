@@ -1,33 +1,65 @@
-import { connectToDatabase } from "../../../../lib/db";
 import { NextResponse } from "next/server";
+
+// Mock Database (Replace this with your actual database logic)
+const casesDatabase = []; // This is a mock database. Use your real database logic here.
 
 export async function POST(req) {
   try {
-    const { db } = await connectToDatabase();
-    const caseDetails = await req.json();
+    const body = await req.json();
 
-    // Validate case details
-    if (!caseDetails.title || !caseDetails.status || !caseDetails.deadline) {
+    const {
+      caseName,
+      status,
+      nextHearing,
+      caseType,
+      clientName,
+      contactEmail,
+      contactPhone,
+      description,
+      notes,
+    } = body;
+
+    // Validate required fields
+    if (
+      !caseName ||
+      !status ||
+      !caseType ||
+      !clientName ||
+      !contactEmail ||
+      !contactPhone
+    ) {
       return NextResponse.json(
-        { error: "Missing required fields: title, status, or deadline" },
+        { error: "Missing required fields" },
         { status: 400 }
       );
     }
 
-    // Insert case into the database
-    const result = await db.collection("cases").insertOne({
-      ...caseDetails,
-      createdAt: new Date(),
-    });
+    // Mock case creation (Replace with actual DB insertion logic)
+    const newCase = {
+      id: casesDatabase.length + 1, // Generate mock ID (Replace with DB auto-increment logic)
+      caseName,
+      status,
+      nextHearing: nextHearing || null,
+      caseType,
+      clientName,
+      contactEmail,
+      contactPhone,
+      description,
+      notes: notes || null,
+      createdAt: new Date().toISOString(),
+    };
 
-    return NextResponse.json({
-      message: "Case created successfully",
-      result: { id: result.insertedId },
-    });
+    // Push new case to the mock database
+    casesDatabase.push(newCase);
+
+    return NextResponse.json(
+      { message: "Case created successfully", case: newCase },
+      { status: 201 }
+    );
   } catch (error) {
     console.error("Error creating case:", error);
     return NextResponse.json(
-      { error: "Failed to create case" },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }

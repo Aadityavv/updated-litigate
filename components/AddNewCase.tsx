@@ -1,5 +1,3 @@
-// components/AddNewCaseModal.tsx
-
 "use client";
 
 import { useState } from "react";
@@ -24,7 +22,7 @@ export default function AddNewCaseModal({ onClose, onAddCase }: AddNewCaseModalP
   const [description, setDescription] = useState("");
   const [notes, setNotes] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const newCase = {
@@ -39,9 +37,29 @@ export default function AddNewCaseModal({ onClose, onAddCase }: AddNewCaseModalP
       notes,
     };
 
-    console.log("New Case:", newCase);
-    onAddCase(newCase);
-    onClose();
+    try {
+      const response = await fetch("/api/cases/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newCase),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("Case added successfully:", result);
+      alert("Case added successfully!");
+
+      onAddCase(result.case); // Notify the parent component with the new case
+      onClose(); // Close the modal
+    } catch (error) {
+      console.error("Error adding case:", error);
+      alert("Failed to add case. Please try again.");
+    }
   };
 
   return (

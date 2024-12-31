@@ -75,10 +75,11 @@ export default function CaseManagement({ onCaseSelect }: CaseManagementProps) {
 
   // Filtered and sorted cases
   const filteredCases = cases
-    .filter((case_) =>
-      case_.title.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-    .sort((a, b) => (a.isPinned === b.isPinned ? 0 : a.isPinned ? -1 : 1));
+  .filter((case_) =>
+    case_?.title?.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+  .sort((a, b) => (a.isPinned === b.isPinned ? 0 : a.isPinned ? -1 : 1));
+
 
   // Handler to add a new case
   const handleAddNewCase = (newCase: Case) => {
