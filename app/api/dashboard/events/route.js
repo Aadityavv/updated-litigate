@@ -1,20 +1,32 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 
-export async function GET() {
+export async function GET(req) {
   try {
     // Establish database connection
     const { db } = await connectToDatabase();
 
-    // Calculate the start and end of the current day in UTC
-    const now = new Date();
-    const startOfDayUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0));
-    const endOfDayUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59, 999));
+    // Get the date query parameter from the request URL
+    const { searchParams } = new URL(req.url);
+    const dateParam = searchParams.get("date");
+
+    if (!dateParam) {
+      return NextResponse.json(
+        { error: "Date query parameter is required" },
+        { status: 400 }
+      );
+    }
+
+    const selectedDate = new Date(dateParam);
+
+    // Calculate the start and end of the selected day in UTC
+    const startOfDayUTC = new Date(Date.UTC(selectedDate.getUTCFullYear(), selectedDate.getUTCMonth(), selectedDate.getUTCDate(), 0, 0, 0, 0));
+    const endOfDayUTC = new Date(Date.UTC(selectedDate.getUTCFullYear(), selectedDate.getUTCMonth(), selectedDate.getUTCDate(), 23, 59, 59, 999));
 
     console.log("Start of Day (UTC):", startOfDayUTC);
     console.log("End of Day (UTC):", endOfDayUTC);
 
-    // Fetch events for the current day
+    // Fetch events for the selected day
     const events = await db.collection("events").find({
       eventDate: {
         $gte: startOfDayUTC,

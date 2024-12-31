@@ -12,16 +12,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
 
 export default function Dashboard() {
   // State Variables
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [lawyerName, setLawyerName] = useState("Guest"); // Dynamic lawyer name
-  const [events, setEvents] = useState<any[]>([]); // Updated type for proper rendering
+  const [events, setEvents] = useState<any[]>([]); // Events fetched from API
   const [filteredEvents, setFilteredEvents] = useState<any[]>([]); // Events filtered by selected date
-  const [notifications, setNotifications] = useState<any[]>([]);
+  const [notifications, setNotifications] = useState<any[]>([]); // Placeholder for notifications
   const [deadlines, setDeadlines] = useState<any[]>([]); // State for upcoming deadlines
   const [stats, setStats] = useState({
     totalCases: 0,
@@ -75,28 +74,40 @@ export default function Dashboard() {
       }
     };
 
-    const fetchEvents = async () => {
-      try {
-        const response = await fetch("/api/dashboard/events");
-        const data = await response.json();
-        console.log("Events data fetched:", data); // Debugging
-        setEvents(data);
-      } catch (error) {
-        console.error("Error fetching events:", error);
-      }
-    };
+    // const fetchEvents = async () => {
+    //   try {
+    //     const response = await fetch("/api/dashboard/events");
+    //     const data = await response.json();
+    //     console.log("Fetched events:", data); // Debugging
+    //     setEvents(data);
+    //   } catch (error) {
+    //     console.error("Error fetching events:", error);
+    //   }
+    // };
 
-    const fetchNotifications = async () => {
+    const fetchEvents = async (date: Date) => {
       try {
-        const response = await fetch("/api/dashboard/notifications");
+        const formattedDate = date.toISOString(); // Convert the date to ISO format
+        const response = await fetch(`/api/dashboard/events?date=${formattedDate}`); // Pass the date as a query parameter
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
+        console.log("Events data fetched:", data); // Debugging
+        setEvents(data); // Update the events state
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+    };
+    
+
+    const fetchNotifications = async () => {
+      try {
+        const response = await fetch("/api/dashboard/notifications");
+        const data = await response.json();
         setNotifications(data);
       } catch (error) {
         console.error("Error fetching notifications:", error);
-        setNotifications([]); // Set notifications to an empty array in case of an error
       }
     };
 
@@ -106,15 +117,17 @@ export default function Dashboard() {
     fetchNotifications();
   }, []);
 
-  // Update filtered events whenever selectedDate or events change
+  // Filter events based on the selected date
   useEffect(() => {
     if (selectedDate) {
-      const filtered = events.filter((event) =>
-        isSameDay(new Date(event.date), selectedDate)
-      );
-      setFilteredEvents(filtered);
+      fetchEvents(selectedDate); // Fetch events for the selected date
     }
-  }, [selectedDate, events]);
+  }, [selectedDate]);
+  
+  
+  console.log("Selected date:", selectedDate);
+  console.log("Event date:", events.map((event) => event.date));
+  
 
   const getCardTitle = (card: string) => {
     switch (card) {
@@ -221,7 +234,7 @@ export default function Dashboard() {
                 className="text-blue-600 mt-2 underline"
                 onClick={() => setShowCount(showCount + 5)}
               >
-                  Show More
+                Show More
               </button>
             )}
           </>
@@ -265,11 +278,17 @@ export default function Dashboard() {
               <ul className="space-y-3">
                 {filteredEvents.length > 0 ? (
                   filteredEvents.map((event) => (
-                    <li key={event.id} className="flex items-center space-x-2">
-                      <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
-                      <span className="text-gray-600 font-medium">
-                        {event.title} at{" "}
-                        {new Date(event.date).toLocaleTimeString([], {
+                    <li
+                      key={event.id}
+                      className="flex flex-col space-y-1 text-gray-700"
+                    >
+                      <span className="font-bold">{event.title}</span>
+                      <span>{event.description}</span>
+                      <span className="text-sm text-gray-500">
+                        Location: {event.location}
+                      </span>
+                      <span className="text-sm text-gray-500">
+                        Time: {new Date(event.date).toLocaleTimeString([], {
                           hour: "2-digit",
                           minute: "2-digit",
                         })}
