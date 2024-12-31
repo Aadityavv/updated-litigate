@@ -22,7 +22,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 export default function UnifiedDashboardComponent() {
-  const [isAuthenticated, setIsAuthenticated] = useState(true); // Default is logged in
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // Default is logged in
   const [activeSection, setActiveSection] = useState("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [selectedCaseId, setSelectedCaseId] = useState<number | null>(null);
