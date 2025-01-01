@@ -288,13 +288,14 @@ export default function Dashboard() {
       {/* Summary Cards */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <Card
-          onClick={() =>
-            setSelectedCard(selectedCard === "total-cases" ? null : "total-cases")
-          }
-          className={`shadow-md transition-transform hover:scale-105 bg-white cursor-pointer ${
-            selectedCard === "total-cases" ? "border-blue-600 border-2" : ""
-          }`}
-        >
+              onClick={() => {
+                setShowCount(5); // Reset the showCount
+                setSelectedCard(selectedCard === "total-cases" ? null : "total-cases");
+              }}
+              className={`shadow-md transition-transform hover:scale-105 bg-white cursor-pointer ${
+                selectedCard === "total-cases" ? "border-blue-600 border-2" : ""
+              }`}
+            >
           <CardHeader>
             <CardTitle className="text-sm font-medium text-gray-700">
               Total Cases
@@ -313,14 +314,16 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card
-          onClick={() =>
-            setSelectedCard(selectedCard === "pending-cases" ? null : "pending-cases")
-          }
-          className={`shadow-md transition-transform hover:scale-105 bg-white cursor-pointer ${
-            selectedCard === "pending-cases" ? "border-yellow-600 border-2" : ""
-          }`}
-        >
+        
+<Card
+  onClick={() => {
+    setShowCount(5); // Reset the showCount
+    setSelectedCard(selectedCard === "pending-cases" ? null : "pending-cases");
+  }}
+  className={`shadow-md transition-transform hover:scale-105 bg-white cursor-pointer ${
+    selectedCard === "pending-cases" ? "border-yellow-600 border-2" : ""
+  }`}
+>
           <CardHeader>
             <CardTitle className="text-sm font-medium text-gray-700">
               Pending Cases
@@ -339,13 +342,14 @@ export default function Dashboard() {
         </Card>
 
         <Card
-          onClick={() =>
-            setSelectedCard(selectedCard === "resolved-cases" ? null : "resolved-cases")
-          }
-          className={`shadow-md transition-transform hover:scale-105 bg-white cursor-pointer ${
-            selectedCard === "resolved-cases" ? "border-green-600 border-2" : ""
-          }`}
-        >
+  onClick={() => {
+    setShowCount(5); // Reset the showCount
+    setSelectedCard(selectedCard === "resolved-cases" ? null : "resolved-cases");
+  }}
+  className={`shadow-md transition-transform hover:scale-105 bg-white cursor-pointer ${
+    selectedCard === "resolved-cases" ? "border-green-600 border-2" : ""
+  }`}
+>
           <CardHeader>
             <CardTitle className="text-sm font-medium text-gray-700">
               Resolved Cases
@@ -365,15 +369,16 @@ export default function Dashboard() {
         </Card>
 
         <Card
-          onClick={() =>
-            setSelectedCard(
-              selectedCard === "upcoming-deadlines" ? null : "upcoming-deadlines"
-            )
-          }
-          className={`shadow-md transition-transform hover:scale-105 bg-white cursor-pointer ${
-            selectedCard === "upcoming-deadlines" ? "border-red-600 border-2" : ""
-          }`}
-        >
+  onClick={() => {
+    setShowCount(5); // Reset the showCount
+    setSelectedCard(
+      selectedCard === "upcoming-deadlines" ? null : "upcoming-deadlines"
+    );
+  }}
+  className={`shadow-md transition-transform hover:scale-105 bg-white cursor-pointer ${
+    selectedCard === "upcoming-deadlines" ? "border-red-600 border-2" : ""
+  }`}
+>
           <CardHeader>
             <CardTitle className="text-sm font-medium text-gray-700">
               Upcoming Deadlines
