@@ -1,83 +1,71 @@
+import { connectToDatabase } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
   try {
-    const body = await req.json(); // Parse the incoming JSON request
+    console.log("Establishing database connection...");
+
+    // Establish database connection
+    const { db } = await connectToDatabase();
+    console.log("Database connection established.");
+
+    // Parse the request body
+    const body = await req.json();
     const { query, categories, sort } = body;
 
-    // Mock database records (replace with actual database calls)
-    const allResults = [
-      {
-        title: "Smith v. Jones (2022)",
-        type: "Case Study",
-        snippet: "Landmark decision on contract law...",
-        link: "https://example.com/smith-v-jones",
-        date: "2022-05-20",
-      },
-      {
-        title: "Intellectual Property Act of 2021",
-        type: "Law",
-        snippet: "Recent legislation on patent protection...",
-        link: "https://example.com/ip-act-2021",
-        date: "2021-11-15",
-      },
-      {
-        title: "The Future of AI in Legal Practice",
-        type: "Article",
-        snippet: "Exploring the impact of artificial intelligence...",
-        link: "https://example.com/ai-legal-practice",
-        date: "2022-08-10",
-      },
-      {
-        title: "Brown v. Board of Education (1954)",
-        type: "Case Study",
-        snippet: "Historic civil rights case...",
-        link: "https://example.com/brown-v-board",
-        date: "1954-05-17",
-      },
-      {
-        title: "Data Privacy Regulations: A Comparative Study",
-        type: "Article",
-        snippet: "Analysis of data protection laws across jurisdictions...",
-        link: "https://example.com/data-privacy",
-        date: "2022-01-30",
-      },
-    ];
+    console.log("Request body:", body);
 
-    // Filter results based on the search query
-    let filteredResults = allResults.filter((item) =>
-      query
-        ? item.title.toLowerCase().includes(query.toLowerCase()) ||
-          item.snippet.toLowerCase().includes(query.toLowerCase())
-        : true
-    );
+    // Build the query dynamically based on provided filters
+    const dbQuery = {};
+    if (query) {
+      dbQuery.$text = { $search: query }; // Assuming a text index exists
+    }
 
-    // Apply category filters if provided
     if (categories && categories.length > 0) {
-      filteredResults = filteredResults.filter((item) =>
-        categories.includes(item.type)
-      );
+      dbQuery.category = { $in: categories }; // Match any of the selected categories
     }
 
-    // Sort results based on the selected option
+    // Determine sorting order
+    const sortOptions = {};
     if (sort === "recency") {
-      filteredResults.sort(
-        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-      );
+      sortOptions.date = -1; // Sort by date (newest first)
+    } else {
+      sortOptions.relevance = -1; // Default: sort by relevance
     }
 
-    return NextResponse.json({ results: filteredResults });
+    console.log("Database query:", dbQuery);
+    console.log("Sort options:", sortOptions);
+
+    // Fetch results from the 'legal_materials' collection
+    console.log("Fetching legal materials from the database...");
+    const results = await db
+      .collection("legal_materials")
+      .find(dbQuery)
+      .sort(sortOptions)
+      .toArray();
+
+    console.log("Raw results fetched from database:", results);
+
+    // Transform the results to a simplified structure
+    const transformedResults = results.map((item) => ({
+      id: item._id.toString(), // Convert ObjectId to string
+      title: item.title || "No title provided", // Fallback for missing title
+      snippet: item.description || "No description available", // Fallback for missing description
+      type: item.category || "Unknown", // Fallback for missing category
+      date: item.date
+        ? new Date(item.date).toISOString()
+        : "Invalid date", // Fallback for missing or invalid date
+      link: item.link || "#", // Fallback for missing link
+    }));
+
+    console.log("Transformed results:", transformedResults);
+
+    return NextResponse.json({ results: transformedResults });
   } catch (error) {
-    console.error("Error processing legal research request:", error);
+    console.error("Error fetching legal materials:", error);
     return NextResponse.json(
-      { error: "Failed to process request" },
+      { error: "Failed to fetch legal materials" },
       { status: 500 }
     );
   }
 }
-
-export const GET = () =>
-  NextResponse.json(
-    { message: "This endpoint supports only POST requests." },
-    { status: 405 }
-  );

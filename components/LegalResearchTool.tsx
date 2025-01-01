@@ -66,10 +66,6 @@ export default function LegalResearchTool() {
     fetchResults();
   };
 
-  // const toggleFilters = () => {
-  //   setIsFiltersVisible(!isFiltersVisible);
-  // };
-
   const handleSortChange = (value: string) => {
     setSortOption(value);
     fetchResults();
@@ -127,14 +123,6 @@ export default function LegalResearchTool() {
                   <h2 className="text-xl font-semibold text-gray-800">
                     Filters
                   </h2>
-                  {/* <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={toggleFilters}
-                    className="text-gray-600 hover:text-gray-800"
-                  > */}
-                    {/* {isFiltersVisible ? <ChevronUp /> : <ChevronDown />}
-                  </Button> */}
                 </div>
                 <div className="space-y-6">
                   {/* Categories Filter */}

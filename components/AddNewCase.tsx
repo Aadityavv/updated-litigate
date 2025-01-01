@@ -22,8 +22,34 @@ export default function AddNewCaseModal({ onClose, onAddCase }: AddNewCaseModalP
   const [description, setDescription] = useState("");
   const [notes, setNotes] = useState("");
 
+  const validateForm = () => {
+    if (!caseName) {
+      alert("Case Name is required.");
+      return false;
+    }
+    if (!clientName) {
+      alert("Client Name is required.");
+      return false;
+    }
+    if (!contactEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail)) {
+      alert("A valid Contact Email is required.");
+      return false;
+    }
+    if (!contactPhone || !/^\d{10}$/.test(contactPhone)) {
+      alert("A valid 10-digit Contact Phone number is required.");
+      return false;
+    }
+    if (!description) {
+      alert("Description is required.");
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!validateForm()) return;
 
     const newCase = {
       caseName,
