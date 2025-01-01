@@ -70,18 +70,18 @@ export default function AddNewCaseModal({ onClose, onAddCase }: AddNewCaseModalP
       exit={{ opacity: 0 }}
     >
       <motion.div
-        className="bg-white rounded-lg shadow-lg w-full max-w-4xl p-6 space-y-6"
-        style={{ marginTop: "5%", marginBottom: "5%" }}
+        className="bg-white rounded-lg shadow-lg w-full max-w-xl p-3 space-y-3 md:max-w-2xl sm:max-w-xs sm:p-2 overflow-y-auto max-h-screen"
+        style={{ marginTop: "2.5%", marginBottom: "2.5%" }}
         initial={{ scale: 0.8 }}
         animate={{ scale: 1 }}
         exit={{ scale: 0.8 }}
       >
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4">Add New Case</h2>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <h2 className="text-lg font-semibold text-gray-800 mb-3 text-center">Add New Case</h2>
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
             <div>
-              <h3 className="text-lg font-bold text-gray-700 mb-2">Case Information</h3>
-              <div className="space-y-4">
+              <h3 className="text-md font-bold text-gray-700 mb-2">Case Information</h3>
+              <div className="space-y-2">
                 <div>
                   <label
                     htmlFor="caseName"
@@ -95,6 +95,7 @@ export default function AddNewCaseModal({ onClose, onAddCase }: AddNewCaseModalP
                     value={caseName}
                     onChange={(e) => setCaseName(e.target.value)}
                     required
+                    className="text-sm"
                   />
                 </div>
                 <div>
@@ -108,7 +109,7 @@ export default function AddNewCaseModal({ onClose, onAddCase }: AddNewCaseModalP
                     id="status"
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
-                    className="w-full mt-1 p-2 border rounded-md"
+                    className="w-full mt-1 p-1 border rounded-md text-sm"
                     required
                   >
                     <option value="Active">Active</option>
@@ -127,7 +128,7 @@ export default function AddNewCaseModal({ onClose, onAddCase }: AddNewCaseModalP
                     id="caseType"
                     value={caseType}
                     onChange={(e) => setCaseType(e.target.value)}
-                    className="w-full mt-1 p-2 border rounded-md"
+                    className="w-full mt-1 p-1 border rounded-md text-sm"
                     required
                   >
                     <option value="Civil">Civil</option>
@@ -149,14 +150,15 @@ export default function AddNewCaseModal({ onClose, onAddCase }: AddNewCaseModalP
                     id="nextHearing"
                     value={nextHearing}
                     onChange={(e) => setNextHearing(e.target.value)}
+                    className="text-sm"
                   />
                 </div>
               </div>
             </div>
 
             <div>
-              <h3 className="text-lg font-bold text-gray-700 mb-2">Client Information</h3>
-              <div className="space-y-4">
+              <h3 className="text-md font-bold text-gray-700 mb-2">Client Information</h3>
+              <div className="space-y-2">
                 <div>
                   <label
                     htmlFor="clientName"
@@ -170,6 +172,7 @@ export default function AddNewCaseModal({ onClose, onAddCase }: AddNewCaseModalP
                     value={clientName}
                     onChange={(e) => setClientName(e.target.value)}
                     required
+                    className="text-sm"
                   />
                 </div>
                 <div>
@@ -185,6 +188,7 @@ export default function AddNewCaseModal({ onClose, onAddCase }: AddNewCaseModalP
                     value={contactEmail}
                     onChange={(e) => setContactEmail(e.target.value)}
                     required
+                    className="text-sm"
                   />
                 </div>
                 <div>
@@ -200,6 +204,7 @@ export default function AddNewCaseModal({ onClose, onAddCase }: AddNewCaseModalP
                     value={contactPhone}
                     onChange={(e) => setContactPhone(e.target.value)}
                     required
+                    className="text-sm"
                   />
                 </div>
               </div>
@@ -207,8 +212,8 @@ export default function AddNewCaseModal({ onClose, onAddCase }: AddNewCaseModalP
           </div>
 
           <div>
-            <h3 className="text-lg font-bold text-gray-700 mb-2">Additional Information</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <h3 className="text-md font-bold text-gray-700 mb-2">Additional Information</h3>
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               <div>
                 <label
                   htmlFor="description"
@@ -220,7 +225,8 @@ export default function AddNewCaseModal({ onClose, onAddCase }: AddNewCaseModalP
                   id="description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  rows={3}
+                  rows={2}
+                  className="text-sm"
                   required
                 />
               </div>
@@ -228,8 +234,8 @@ export default function AddNewCaseModal({ onClose, onAddCase }: AddNewCaseModalP
           </div>
 
           <div>
-            <h3 className="text-lg font-bold text-gray-700 mb-2">Optional Information</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <h3 className="text-md font-bold text-gray-700 mb-2">Optional Information</h3>
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               <div>
                 <label
                   htmlFor="notes"
@@ -242,6 +248,7 @@ export default function AddNewCaseModal({ onClose, onAddCase }: AddNewCaseModalP
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   rows={2}
+                  className="text-sm"
                 />
               </div>
               <div>
@@ -251,21 +258,21 @@ export default function AddNewCaseModal({ onClose, onAddCase }: AddNewCaseModalP
                 >
                   Documents (Optional)
                 </label>
-                <Input type="file" id="documents" />
+                <Input type="file" id="documents" className="text-sm" />
               </div>
             </div>
           </div>
 
-          <div className="flex justify-end space-x-4">
+          <div className="flex justify-end space-x-2">
             <Button
               type="button"
               variant="outline"
               onClick={onClose}
-              className="text-gray-700"
+              className="text-gray-700 text-sm"
             >
               Cancel
             </Button>
-            <Button type="submit" className="bg-blue-600 text-white">
+            <Button type="submit" className="bg-blue-600 text-white text-sm">
               Add Case
             </Button>
           </div>
