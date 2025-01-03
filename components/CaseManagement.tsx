@@ -75,11 +75,10 @@ export default function CaseManagement({ onCaseSelect }: CaseManagementProps) {
 
   // Filtered and sorted cases
   const filteredCases = cases
-  .filter((case_) =>
-    case_?.title?.toLowerCase().includes(searchQuery.toLowerCase())
-  )
-  .sort((a, b) => (a.isPinned === b.isPinned ? 0 : a.isPinned ? -1 : 1));
-
+    .filter((case_) =>
+      case_?.title?.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .sort((a, b) => (a.isPinned === b.isPinned ? 0 : a.isPinned ? -1 : 1));
 
   // Handler to add a new case
   const handleAddNewCase = (newCase: Case) => {
@@ -135,6 +134,7 @@ export default function CaseManagement({ onCaseSelect }: CaseManagementProps) {
                     <h3 className="font-semibold text-lg text-blue-600 hover:text-blue-800 transition-colors duration-200">
                       {case_.title}
                     </h3>
+                    <p className="text-sm text-gray-600">Case ID: {case_.id}</p>
                     <p className="text-sm text-gray-600">Status: {case_.status}</p>
                     <p className="text-sm text-gray-600">Deadline: {case_.deadline}</p>
                   </div>
