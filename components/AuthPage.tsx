@@ -14,7 +14,7 @@ export default function AuthPage({ onLogin }: { onLogin: () => void }) {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
-    country: "",
+    // country: "",
     phone: "",
     email: "",
     password: "",
@@ -114,7 +114,7 @@ export default function AuthPage({ onLogin }: { onLogin: () => void }) {
                   className="mt-1 text-sm"
                 />
               </div>
-              <div>
+              {/* <div>
                 <label htmlFor="country" className="block text-xs font-medium text-gray-700">
                   Country
                 </label>
@@ -126,7 +126,7 @@ export default function AuthPage({ onLogin }: { onLogin: () => void }) {
                   required
                   className="mt-1 text-sm"
                 />
-              </div>
+              </div> */}
               <div>
                 <label htmlFor="phone" className="block text-xs font-medium text-gray-700">
                   Phone Number
