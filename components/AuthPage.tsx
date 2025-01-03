@@ -15,7 +15,7 @@ export default function AuthPage({ onLogin }: { onLogin: () => void }) {
     firstName: "",
     lastName: "",
     // country: "",
-    phone: "",
+    // phone: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -127,7 +127,7 @@ export default function AuthPage({ onLogin }: { onLogin: () => void }) {
                   className="mt-1 text-sm"
                 />
               </div> */}
-              <div>
+              {/* <div>
                 <label htmlFor="phone" className="block text-xs font-medium text-gray-700">
                   Phone Number
                 </label>
@@ -139,7 +139,7 @@ export default function AuthPage({ onLogin }: { onLogin: () => void }) {
                   required
                   className="mt-1 text-sm"
                 />
-              </div>
+              </div> */}
             </div>
           )}
 
