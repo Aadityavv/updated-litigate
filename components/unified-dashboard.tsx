@@ -65,19 +65,20 @@ export default function UnifiedDashboardComponent() {
   }
 
   const baseButtonStyle =
-    "w-full flex items-center justify-start pl-4 pr-2 py-3 text-left rounded-lg";
+    "w-full flex items-center justify-start px-4 py-3 text-left rounded-lg";
 
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
       <div
         className={`${
-          isSidebarOpen ? "w-64" : "w-20"
+          isSidebarOpen ? "w-64 lg:w-80" : "w-20"
         } sm:w-auto sm:translate-x-0 absolute sm:relative z-50 flex flex-col bg-white border-r transition-all duration-300 sm:block ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        <div className="flex items-center justify-between p-4 border-b">
+        isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+
+        <div className="flex items-center justify-between px-4 py-4 border-b">
           {isSidebarOpen && (
             <h1 className="text-2xl font-bold text-gray-800">LitigateIQ</h1>
           )}
@@ -97,7 +98,7 @@ export default function UnifiedDashboardComponent() {
         </div>
 
         {/* Sidebar Navigation */}
-        <nav className="mt-2 flex-1 overflow-y-auto">
+        <nav className="mt-2 flex-1 overflow-y-auto px-2">
           <ul className="space-y-2">
             {[
               { name: "Dashboard", icon: <Grid className="h-5 w-5 mr-2" />, section: "dashboard" },
@@ -130,7 +131,7 @@ export default function UnifiedDashboardComponent() {
         <div className="p-4 border-t">
           <Button
             variant="outline"
-            className="text-black border-black w-full"
+            className={`${baseButtonStyle} text-black border-gray-800 bg-white hover:bg-gray-100`}
             onClick={() => {
               handleLogout();
               if (window.innerWidth < 640) setIsSidebarOpen(false);
@@ -178,7 +179,7 @@ export default function UnifiedDashboardComponent() {
         </div>
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-8 bg-gray-100">
+        <main className="flex-1 overflow-y-auto p-6 sm:p-8 bg-gray-100">
           {renderContent()}
         </main>
       </div>
