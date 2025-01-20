@@ -70,14 +70,14 @@ const SidebarPC = ({
           <li key={section}>
             <Button
               onClick={() => setActiveSection(section)}
-                className={`w-full flex items-center justify-start pl-4 pr-2 py-3 text-left rounded-lg ${
-                 activeSection === section
+              className={`w-full flex items-center justify-start pl-4 pr-2 py-3 text-left rounded-lg ${
+                activeSection === section
                   ? "bg-gray-100 text-black hover:bg-gray-100"
-                   : "bg-white text-black hover:bg-gray-100"
-                       } ${!isSidebarOpen ? "justify-center" : ""}`}
-              >
-             {icon}
-             {isSidebarOpen && name}
+                  : "bg-white text-black hover:bg-gray-100"
+              } ${!isSidebarOpen ? "justify-center" : ""}`}
+            >
+              {icon}
+              {isSidebarOpen && name}
             </Button>
           </li>
         ))}
@@ -244,17 +244,18 @@ export default function UnifiedDashboardComponent() {
 
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="flex items-center px-4 py-3 bg-white shadow sm:px-8">
+        <header className="flex items-center px-4 py-3 bg-white shadow sm:px-8 relative">
           {isMobile && (
             <Button
               variant="ghost"
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="text-gray-800 absolute left-4"
             >
               <Menu className="h-6 w-6" />
             </Button>
           )}
           <h2
-            className={`text-xl font-bold flex-1 ${isMobile ? "text-center" : "text-left"}`}
+            className={`text-xl font-bold ${isMobile ? "flex-1 text-center" : "text-left"}`}
           >
             {formatHeading(activeSection)}
           </h2>
