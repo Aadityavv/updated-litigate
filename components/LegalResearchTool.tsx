@@ -35,7 +35,7 @@ export default function LegalResearchTool() {
   const fetchResults = async () => {
     setLoading(true);
     try {
-      const response = await fetch("/api/legal-research", {
+      const response = await fetch("https://dummy-backend-15jt.onrender.com/research/legal", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -81,7 +81,7 @@ export default function LegalResearchTool() {
   };
 
   return (
-    <div className="p-4 sm:p-6 bg-gray-50">
+    <div className="p-0 sm:p-6 bg-gray-0">
       <Toaster position="top-right" />
       <Card className="shadow-lg max-w-7xl mx-auto">
         <CardHeader>

@@ -1,6 +1,8 @@
-# Litigate IQ Frontend (Updated Version)
 
-Welcome to the **Updated Litigate IQ Frontend** repository! This project is built using **Next.js** and is deployed on **Vercel**.
+# Litigate IQ Frontend
+
+Welcome to the **Litigate IQ Frontend** repository! This project is built using **Next.js** and is deployed on **Vercel**.
+
 
 ## 🚀 Live Website
 Access the deployed application here:  
@@ -18,10 +20,17 @@ Clone the repository and install dependencies:
 
 ```bash
 # Clone the repository
+<<<<<<< HEAD
 git clone https://github.com/Aadityavv/updated-litigate.git
 
 # Navigate to the project directory
 cd updated-litigate
+=======
+git clone https://github.com/Aadityavv/Frontend-Litigate-without-db.git
+
+# Navigate to the project directory
+cd Frontend-Litigate-without-db
+>>>>>>> c45762e4ff7d89a309b65196318df1579fab0b55
 
 # Install dependencies
 npm install  # or yarn install, or pnpm install
@@ -38,12 +47,22 @@ Once started, open [http://localhost:3000](http://localhost:3000) in your browse
 
 ## 🏗️ Project Structure
 ```
+<<<<<<< HEAD
 updated-litigate/
 ├── public/              # Static assets
 ├── pages/               # Next.js pages
 ├── components/          # Reusable components
 ├── styles/             # Global styles
 ├── utils/               # Utility functions
+=======
+Frontend-Litigate-without-db/
+├── public/              # Static assets
+├── src/
+│   ├── app/             # Application pages
+│   ├── components/      # Reusable components
+│   ├── styles/          # Global styles
+│   ├── utils/           # Utility functions
+>>>>>>> c45762e4ff7d89a309b65196318df1579fab0b55
 ├── .env.example         # Example environment file
 ├── package.json         # Project metadata & dependencies
 └── README.md            # Project documentation

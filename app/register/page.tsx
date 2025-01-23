@@ -9,7 +9,7 @@ const RegisterPage = () => {
 
     const handleRegister = async (e:React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const response = await fetch("/api/register", {
+        const response = await fetch(`https://dummy-backend-15jt.onrender.com/auth/register`,  {
             method: "POST",
             body: JSON.stringify({ email, password }),
             headers: { "Content-Type": "application/json" },

@@ -18,6 +18,7 @@ import { PlusCircle, Star, StarOff, Search } from "lucide-react";
 import { Toaster, toast } from "react-hot-toast";
 import { Input } from "@/components/ui/input";
 import AddNewCaseModal from "@/components/AddNewCase";
+import { fetchCases } from "@/lib/api/cases";
 
 interface Case {
   id: number;
@@ -32,6 +33,7 @@ interface CaseManagementProps {
 }
 
 export default function CaseManagement({ onCaseSelect }: CaseManagementProps) {
+  console.log("✅ CaseManagement component is rendering...");
   const router = useRouter();
 
   // State for cases
@@ -41,22 +43,23 @@ export default function CaseManagement({ onCaseSelect }: CaseManagementProps) {
 
   // Fetch cases from API
   useEffect(() => {
-    const fetchCases = async () => {
+    console.log("✅ useEffect is running in CaseManagement.tsx"); // Check if useEffect executes
+
+    const loadCases = async () => {
+      console.log("🟡 Calling fetchCases() inside loadCases..."); // This should log before API call
       try {
-        const response = await fetch("/api/cases"); // Replace with your API endpoint
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data: Case[] = await response.json();
-        setCases(data);
+        const data: Case[] = await fetchCases();
+        console.log("✅ Data received in CaseManagement.tsx:", data); // Should log fetched data
+
+        setCases(data.reverse());
       } catch (error) {
-        console.error("Error fetching cases:", error);
+        console.error("❌ Error fetching cases:", error);
         toast.error("Failed to fetch cases. Please try again later.");
       }
     };
 
-    fetchCases();
-  }, []);
+    loadCases();
+}, []);
 
   // Handler to pin/unpin a case
   const handlePinCase = (caseId: number) => {
@@ -88,16 +91,16 @@ export default function CaseManagement({ onCaseSelect }: CaseManagementProps) {
   };
 
   return (
-    <div className="p-4 sm:p-6 bg-gray-50">
+    <div className="p-2 sm:p-6 bg-gray-0">
       <Card className="shadow-lg max-w-7xl mx-auto">
         <Toaster position="top-right" reverseOrder={false} />
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-gray-800">
-            Case Management
+          Manage your legal cases
           </CardTitle>
-          <CardDescription className="text-gray-600">
-            Manage your legal cases
-          </CardDescription>
+          {/* <CardDescription className="text-gray-600">
+            
+          </CardDescription> */}
         </CardHeader>
         <CardContent>
           {/* Search Bar */}
@@ -171,7 +174,6 @@ export default function CaseManagement({ onCaseSelect }: CaseManagementProps) {
           </Button>
         </CardFooter>
       </Card>
-
       {/* Add New Case Modal */}
       {isAddCaseModalOpen && (
         <AddNewCaseModal

@@ -25,23 +25,26 @@ interface Document {
 }
 
 interface CaseDetails {
-  caseId: string;
-  title: string;
-  clientName: string;
-  contactInfo: {
-    address: string;
-    email: string;
-    phone: string;
-  };
-  caseType: string;
-  description: string;
-  assignedLawyer: string;
-  assignedJudge: string;
-  section: string;
-  courtAddress: string;
-  caseFileDate: string;
+  caseTitle: string;
+  caseDesc: string;
+  dateOfFile: string;
+  courtName: string;
+  judgeAssigned: string;
+  sectionOrAct: string;
+  status: string;
+  bookmark: boolean;
+  partyName: string;
+  partyRole: string;
+  partyContact: string;
+  partyAddress: string;
   notes?: Note[];
   documents?: Document[];
+  eventDate: string;
+  eventType: string;
+  eventOutcome: string;
+  eventDesc: string;
+  eventLocation: string;
+  partyEmail: string;
 }
 
 interface CaseDetailViewProps {
@@ -62,13 +65,13 @@ export default function CaseDetailView({ caseId }: CaseDetailViewProps) {
       }
 
       try {
-        const response = await fetch(`/api/cases/${caseId}`);
+        const response = await fetch(`https://dummy-backend-15jt.onrender.com/caseDetails/?lawyerId=12345&caseId=${caseId}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
         console.log("Fetched Case Details:", data); // Debugging log
-        setCaseDetails(data);
+        setCaseDetails(data.message);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching case details:", error);
@@ -141,7 +144,7 @@ export default function CaseDetailView({ caseId }: CaseDetailViewProps) {
           <CardTitle className="text-xl flex items-center space-x-2">
             <FileText className="h-6 w-6 text-blue-500" />
             <span>
-              {caseDetails.title} - Case ID: {caseDetails.caseId || "123456"}
+            {caseDetails.caseTitle} (Status: {caseDetails.status})
             </span>
           </CardTitle>
         </CardHeader>
@@ -150,62 +153,62 @@ export default function CaseDetailView({ caseId }: CaseDetailViewProps) {
             <div>
               <Label className="text-gray-600">Client Name</Label>
               <p className="text-lg font-semibold">
-                {caseDetails.clientName || "No data to display"}
+                {caseDetails.partyName || "No data to display"}
               </p>
             </div>
             <div>
               <Label className="text-gray-600">Contact Information</Label>
               <p className="text-gray-700">
-                Address: {caseDetails.contactInfo?.address || "No data to display"}
+                Address: {caseDetails.partyAddress || "No data to display"}
               </p>
               <p className="text-gray-700">
-                Email: {caseDetails.contactInfo?.email || "No data to display"}
+                Email: {caseDetails.partyEmail || "No data to display"}
               </p>
               <p className="text-gray-700">
-                Phone: {caseDetails.contactInfo?.phone || "No data to display"}
+                Phone: {caseDetails.partyContact || "No data to display"}
               </p>
             </div>
-            <div>
+            {/* <div>
               <Label className="text-gray-600">Case Type</Label>
               <p className="text-gray-700">
                 {caseDetails.caseType || "No data to display"}
               </p>
-            </div>
+            </div> */}
             <div>
               <Label className="text-gray-600">Description</Label>
               <p className="text-gray-700">
-                {caseDetails.description || "No data to display"}
+                {caseDetails.caseDesc || "No data to display"}
               </p>
             </div>
-            <div>
+            {/* <div>
               <Label className="text-gray-600">Assigned Lawyer/Team</Label>
               <p className="text-gray-700">
                 {caseDetails.assignedLawyer || "No data to display"}
               </p>
-            </div>
+            </div> */}
 
             <div>
               <Label className="text-gray-600">Assigned Judge</Label>
               <p className="text-gray-700">
-                {caseDetails.assignedJudge || "No data to display"}
+                {caseDetails.judgeAssigned || "No data to display"}
               </p>
             </div>
             <div>
               <Label className="text-gray-600">Section/Act</Label>
               <p className="text-gray-700">
-                {caseDetails.section || "No data to display"}
+                {caseDetails.sectionOrAct || "No data to display"}
               </p>
             </div>
             <div>
-              <Label className="text-gray-600">Court Address</Label>
+              <Label className="text-gray-600">Court Name</Label>
               <p className="text-gray-700">
-                {caseDetails.courtAddress || "No data to display"}
+                {caseDetails.courtName || "No data to display"}
               </p>
             </div>
             <div>
               <Label className="text-gray-600">Case Filed Date</Label>
               <p className="text-gray-700">
-                {caseDetails.caseFileDate || "No data to display"}
+                {caseDetails.dateOfFile || "No data to display"}
               </p>
             </div>
           </div>

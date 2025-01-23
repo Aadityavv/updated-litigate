@@ -44,10 +44,10 @@ export default function SettingsComponent() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-8">
+    <div className="container mx-auto p-2 space-y-8">
       <div className="grid gap-6">
         {/* Account Settings */}
-        <Card className="shadow-md border border-gray-200">
+        <Card className="shadow-md border">
           <CardHeader>
             <CardTitle className="text-xl text-gray-700">Account Settings</CardTitle>
             <CardDescription className="text-sm text-gray-500">

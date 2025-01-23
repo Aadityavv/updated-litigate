@@ -3,6 +3,7 @@
 import { useParams } from "next/navigation";
 import CaseDetailView from "@/components/CaseDetailView";
 import { useState, useEffect } from "react";
+import { fetchCaseById } from "@/lib/api/cases";
 
 interface CaseDetails {
   caseId: string;
@@ -36,11 +37,7 @@ export default function CaseDetailPage() {
       }
 
       try {
-        const response = await fetch(`/api/cases/${params.id}`);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch case details: ${response.statusText}`);
-        }
-        const data = await response.json();
+        const data = await fetchCaseById(params.id);
         setCaseDetails(data);
       } catch (error) {
         console.error("Error fetching case details:", error);

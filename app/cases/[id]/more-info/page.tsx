@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Clock, FileText } from "lucide-react";
 import Image from "next/image";
+import { fetchCaseById } from "@/lib/api/cases";
 
 interface CaseDetails {
     title: string;
@@ -20,18 +21,20 @@ interface CaseDetails {
     documents: { name: string; url: string; category: string }[];
 }
 
-
 export default function CaseMoreInfoPage() {
     const params = useParams();
     const id = params?.id;
     const [caseDetails, setCaseDetails] = useState<CaseDetails | null>(null);
 
-
     useEffect(() => {
         const fetchCaseDetails = async () => {
-            const response = await fetch(`/api/cases/${id}`);
-            const data = await response.json();
-            setCaseDetails(data);
+            if (!id) return;
+            try {
+                const data = await fetchCaseById(id);
+                setCaseDetails(data);
+            } catch (error) {
+                console.error("Error fetching case details:", error);
+            }
         };
         fetchCaseDetails();
     }, [id]);

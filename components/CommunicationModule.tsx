@@ -55,11 +55,12 @@ export default function CommunicationModule() {
     const fetchData = async () => {
       try {
         const [personalRes, groupRes, tasksRes, filesRes, notesRes] = await Promise.all([
-          fetch("/api/communication/conversations/personal"),
-          fetch("/api/communication/conversations/group"),
-          fetch("/api/communication/tasks"),
-          fetch("/api/communication/files"),
-          fetch("/api/communication/notes"),
+          fetch(`https://dummy-backend-15jt.onrender.com/communication/conversations/personal`),
+          fetch(`https://dummy-backend-15jt.onrender.com/communication/conversations/group`),
+          fetch(`https://dummy-backend-15jt.onrender.com/communication/tasks`),
+          fetch(`https://dummy-backend-15jt.onrender.com/communication/files`),
+          fetch(`https://dummy-backend-15jt.onrender.com/communication/notes`),
+
         ]);
 
         setMessages((await personalRes.json()) || []);
@@ -141,7 +142,7 @@ export default function CommunicationModule() {
   };
 
   return (
-    <div className="space-y-6 p-4 sm:p-6 bg-gray-50">
+    <div className="space-y-6 p-0 sm:p-6 bg-gray-0">
       {/* Communication Module */}
       <Card className="shadow-lg">
         <CardHeader>
